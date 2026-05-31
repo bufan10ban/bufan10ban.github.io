@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <title>AC(Any Create)自动机</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="any" href="/icon_2510.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background: url(/autumn_trip_2025.jpg) no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin: 20px 0;
+            font-size: 32px;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .count-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 0;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #409eff;
+            color: white;
+            transition: all 0.2s;
+            /* 按钮 完全不透明 */
+            opacity: 1 !important;
+        }
+
+        button:hover {
+            background: #338eef;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #countNum {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        select:focus {
+            border-color: #409eff;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            outline: none;
+            resize: none;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        textarea:focus {
+            border-color: #409eff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        #zaoyao {
+            min-height: 120px;
+            padding: 20px;
+            background: rgba(252, 253, 255, 0.9);
+            border-radius: 12px;
+            border: 1px dashed #dcdfe6;
+            white-space: pre-wrap;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            background: #67c23a;
+        }
+
+        .generate-btn:hover {
+            background: #5cb533;
+        }
+
+        small {
+            display: block;
+            text-align: center;
+            color: #999;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        /* 弹窗勾选面板样式 */
+        .mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .check-panel {
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .close-btn {
+            background: #f56c6c;
+        }
+        .check-block {
+            margin: 15px 0;
+        }
+        .check-block h4 {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .name-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.8);
+        }
+        .name-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .name-item input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .sub-btn {
+            background: #9c88ff;
+        }
+        
+        /* 背景图选择样式 */
+        .bg-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .bg-item {
+            width: 80px;
+            height: 60px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background-size: cover;
+            background-position: center;
+        }
+        .bg-item:hover {
+            transform: scale(1.05);
+        }
+        .bg-item.active {
+            border-color: #409eff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AC(Any Create)自动机</h1>
+    <a href="https://bufan10ban.github.io">返回主站</a>
+
+    <!-- 背景图选择 -->
+    <div class="card">
+        <p>背景图选择：</p>
+        <div class="bg-preview" id="bgPreview">
+            <div class="bg-item active" style="background-image: url('https://are-hfl3.github.io/autumn_trip_2025.jpg')" data-bg="https://are-hfl3.github.io/autumn_trip_2025.jpg"></div>
+            <div class="bg-item" style="background-image: url('https://are-hfl3.github.io/shiban_xiongduojishao.png')" data-bg="https://are-hfl3.github.io/shiban_xiongduojishao.png"></div>
+        </div>
+    </div>
+
+    <!-- 数量控制 -->
+    <div class="card count-box">
+        <label for="countInput">生成数量：</label>
+        <input type="number" id="countInput" min="1" max="100" value="5" style="width: 80px; padding: 8px; font-size: 16px; text-align: center; border: 1px solid #e1e5e9; border-radius: 8px;">
+        <span>条</span>
+    </div>
+
+    <!-- 模板区 -->
+    <div class="card">
+        <p>模板选择 / 自定义：@B男生 @G女生 @E全体 @S科目 @T老师，多个占位自动换人</p>
+        <select id="tempSelect" onchange="fillTemplate()">
+            <option value="@B like @G">默认样式</option>
+            <option value="@E、@E和@E互相抄作业">互抄作业</option>
+            <option value="@E上课玩手表被@E发现了">偷玩手表</option>
+            <option value="@E考@S拉爆@E">考试拉爆</option>
+            <option value="@B与@G官宣在一起啦">官宣相恋</option>
+            <option value="@B、@G两人喜结良缘">喜结良缘</option>
+            <option value="@B和@G约会偶遇@E">多人趣味</option>
+            <option value="@B当众向@G表达心意">当众表白</option>
+            <option value="@T在@S课上点名批评@E">点名批评--杜鹃</option>
+        </select>
+
+        <div class="btn-group">
+            <button onclick="randomTemplate()">随机模板</button>
+        </div>
+
+        <textarea id="formatInput" placeholder="自定义话术">@B like @G</textarea>
+    </div>
+
+    <!-- 结果展示 -->
+    <div class="card">
+        <div id="zaoyao">点击下面的按钮刷新！</div>
+    </div>
+
+    <!-- 生成按钮 -->
+    <button class="generate-btn" onclick="zaoyao()">造谣？生成</button>
+
+    <div class="card">
+        <p>by hjq,zbc</p>
+        <p>免责声明：内容纯属随机构造，与现实无关！</p>
+    </div>
+
+
+    <script>
+        // 原始数据
+        const originData = {
+            boys: ["程思恺","邓博文","龚睿谦","胡佳祺","黄明哲","黄悠涵","贾泽童","李仁瀚","李天羽","梁新坤","马梓陌","沈铭浩","盛悠然","束润泽","汪禹哲","夏泽雨","熊珞然","许嘉辰","许文瀚","许子康","许梓墨","张百川","张瑾辰","赵彦承","周晨隽","朱皓辰","朱瑞嘉"],
+            girls: ["陈玺潞","丁茗媗","丁沐秋","都懿萱","方华清","胡家宁","黄洛维","黄羽琪","李梓清","刘梦曦","司凡宇","宋雨轩","孙阳","陶晨冉","王璐瑶","王子萱","严心怡","余梓萱","张鑫妤","赵锴玥","赵思彤","郑璟雯","庄妍"],
+            subjs: ["语文","数学","英语","道法","历史","地理","生物","物理","化学"],
+            teachers: ["卜金东","张雅迪","王惠","赵卫华","杜鹃","洪莫凡","张志敏","陈诺","蒋从容","葛苏莞"]
+        };
+
+        const templateList = [
+            "@B like @G",
+            "@E、@E和@E互相抄作业",
+            "@E上课玩手表被@E发现了",
+            "@E考@S拉爆@E",
+            "@B与@G官宣在一起啦",
+            "@B、@G两人喜结良缘",
+            "@B和@G约会偶遇@E",
+            "@B当众向@G表达心意",
+            "@T在@S课上点名批评@E",
+        ];
+        let count = 5;
+
+        // 打开关闭面板
+        function openPanel(){
+            document.getElementById('mask').style.display = 'flex';
+        }
+        function closePanel(){
+            document.getElementById('mask').style.display = 'none';
+        }
+
+        // 渲染勾选列表
+        function renderCheck(type){
+            const list = originData[type];
+            const container = document.getElementById(type + 'CheckList');
+            container.innerHTML = '';
+            list.forEach((name,idx)=>{
+                let item = document.createElement('div');
+                item.className = 'name-item';
+                item.innerHTML = `<input type="checkbox" id="${type}_${idx}" checked><label>${name}</label>`;
+                container.appendChild(item);
+            });
+        }
+
+        // 页面初始化渲染
+        window.onload = function(){
+            renderCheck('boys');
+            renderCheck('girls');
+            renderCheck('subjs');
+            renderCheck('teachers');
+            
+            // 初始化背景图选择
+            initBgSelection();
+        };
+
+        // 全选反选
+        function checkAll(type){
+            document.querySelectorAll(`#${type}CheckList input`).forEach(el=>el.checked=true);
+        }
+        function uncheckAll(type){
+            document.querySelectorAll(`#${type}CheckList input`).forEach(el=>el.checked=false);
+        }
+
+        // 获取已勾选数据
+        function getChecked(type){
+            const list = originData[type];
+            let res = [];
+            document.querySelectorAll(`#${type}CheckList input`).forEach((el,idx)=>{
+                if(el.checked) res.push(list[idx]);
+            });
+            return res.length ? res : list;
+        }
+
+        // 获取数量值
+        function getCount() {
+            return parseInt(document.getElementById("countInput").value) || 1;
+        }
+
+        function fillTemplate(){
+            let val = document.getElementById("tempSelect").value;
+            document.getElementById("formatInput").value = val;
+        }
+        function randomTemplate(){
+            let idx = Math.floor(Math.random() * templateList.length);
+            document.getElementById("formatInput").value = templateList[idx];
+        }
+
+        // 替换文本
+        function replaceAllName(str){
+            let b = getChecked('boys');
+            let g = getChecked('girls');
+            let e = [...b,...g];
+            let s = getChecked('subjs');
+            let t = getChecked('teachers');
+
+            return str.replace(/@B/g, ()=>b[Math.floor(Math.random()*b.length)])
+                      .replace(/@G/g, ()=>g[Math.floor(Math.random()*g.length)])
+                      .replace(/@E/g, ()=>e[Math.floor(Math.random()*e.length)])
+                      .replace(/@S/g, ()=>s[Math.floor(Math.random()*s.length)])
+                      .replace(/@T/g, ()=>t[Math.floor(Math.random()*t.length)]);
+        }
+
+        // 生成内容
+        function zaoyao() {
+            let result = "";
+            let userFormat = document.getElementById("formatInput").value || "@B like @G";
+            let currentCount = getCount();
+            for(let i=1;i<=currentCount;i++){
+                let oneLine = replaceAllName(userFormat);
+                result += oneLine + "<br>";
+            }
+            document.getElementById('zaoyao').innerHTML = result;
+        }
+        
+        // 背景图选择功能
+        function initBgSelection() {
+            const bgItems = document.querySelectorAll('.bg-item');
+            bgItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有active类
+                    bgItems.forEach(i => i.classList.remove('active'));
+                    // 给当前选中项添加active类
+                    this.classList.add('active');
+                    // 获取背景图URL
+                    const bgUrl = this.getAttribute('data-bg');
+                    // 设置body背景
+                    document.body.style.backgroundImage = `url(${bgUrl})`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
