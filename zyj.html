@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="any" href="/icon_2510.png">
+    <link rel="stylesheet" href="main.css">
     <style>
         * {
             margin: 0;
@@ -38,7 +39,7 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.45);
             border-radius: 14px;
             padding: 22px 24px;
             margin: 20px 0;
@@ -101,7 +102,7 @@
             border: 1px solid #e1e5e9;
             border-radius: 8px;
             outline: none;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         select:focus {
@@ -118,7 +119,7 @@
             outline: none;
             resize: none;
             margin-top: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         textarea:focus {
@@ -252,7 +253,11 @@
     </style>
 </head>
 <body>
-
+    <div class="nav">
+        <a href="/">主站</a>
+        <a href="/zyj.html">AC机</a>
+        <a href="/days.html">重要日子</a>
+    </div>
     <h1>AC(Any Create)自动机</h1>
     <a href="https://bufan10ban.github.io">返回主站</a>
 
@@ -309,6 +314,10 @@
 
 
     <script>
+        //这一段不是zbc让我写的。——hjq
+        console.info('我就是喜欢hlw咋了');
+        console.warn('你能对我咋样？告密？');
+        console.error('还是你就是hlw？');
         // 原始数据
         const originData = {
             boys: ["程思恺","邓博文","龚睿谦","胡佳祺","黄明哲","黄悠涵","贾泽童","李仁瀚","李天羽","梁新坤","马梓陌","沈铭浩","盛悠然","束润泽","汪禹哲","夏泽雨","熊珞然","许嘉辰","许文瀚","许子康","许梓墨","张百川","张瑾辰","赵彦承","周晨隽","朱皓辰","朱瑞嘉"],

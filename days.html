@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--我一个学OI的竟然感受到了程序员的艰辛……-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="any" href="/icon_2510.png">
+    <title>重要日子提醒</title>
+    <link rel="stylesheet" href="main.css">
+    
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="nav">
+        <a href="/">主站</a>
+        <a href="/zyj.html">AC机</a>
+        <a href="/days.html">重要日子</a>
+    </div>
+
+    <!-- 横幅 -->
+    <div class="banner glass" id="home">
+        <h1>重要日子提醒</h1>
+    </div>
+
+    <!-- 重要日子容器 -->
+    <div class="container glass" id="important-days">
+        <h2>重要日子列表</h2>
+        <div class="important-day-wall"></div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <a href="/">返回主站</a>
+    </div>
+
+    <!-- 引入JS加载JSON数据 -->
+    <script>
+        //这一段不是zbc让我写的。——hjq
+        console.info('我就是喜欢hlw咋了');
+        console.warn('你能对我咋样？告密？');
+        console.error('还是你就是hlw？');
+        // 重要日子数据（你只需要在这里改日期就行）
+        const importantDaysData = [
+            {
+                date: '2026-07-01',
+                title: '暑假',
+                description: '按第一天计',
+                tag: '长假'
+            },
+            {
+                date: '2027-01-08',
+                title: '一个特殊的日子',
+                description: '是啥不告诉你',
+                tag: '生日'
+            },
+            {
+                date: '2026-11-22',
+                title: 'bjd的生日',
+                description: '去年这时刚走漏去科技馆的消息',
+                tag: '生日'
+            }
+        ];
+
+        // 计算剩余天数
+        function getRemainingDays(targetDateStr) {
+            const today = new Date();
+            const target = new Date(targetDateStr);
+            // 消除时间影响
+            today.setHours(0, 0, 0, 0);
+            target.setHours(0, 0, 0, 0);
+            
+            const diffTime = target - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : 0;
+        }
+
+        // 渲染重要日子到页面
+        function renderImportantDays() {
+            const container = document.querySelector('.important-day-wall');
+            container.innerHTML = '';
+
+            if (importantDaysData.length === 0) {
+                container.innerHTML = '<p style="color: #fff; text-align: center; padding: 20px;">暂无重要日子数据</p>';
+                return;
+            }
+
+            // 遍历数据生成卡片
+            importantDaysData.forEach(day => {
+                const remainDays = getRemainingDays(day.date);
+                
+                const card = document.createElement('div');
+                card.className = 'quote-card day-card';
+                card.innerHTML = `
+                    <p><strong>日期：</strong>${day.date}</p>
+                    <p><strong>标题：</strong>${day.title}</p>
+                    <p><strong>描述：</strong>${day.description || '无'}</p>
+                    <p class="author"><strong>标签：</strong>${day.tag || '无'}</p>
+                    <div class="remain-day">剩余：${remainDays} 天</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 页面加载完成后渲染
+        window.onload = renderImportantDays;
+    </script>
+</body>
+</html>
