@@ -351,6 +351,8 @@
         function renderCheck(type){
             const list = originData[type];
             const container = document.getElementById(type + 'CheckList');
+            // 该弹窗面板未放入页面时安全跳过，避免 onload 抛错导致后续初始化(如背景切换)中断
+            if(!container) return;
             container.innerHTML = '';
             list.forEach((name,idx)=>{
                 let item = document.createElement('div');
@@ -389,9 +391,11 @@
             return res.length ? res : list;
         }
 
-        // 获取数量值
+        // 获取数量值（钳制到 HTML 声明的 1~100，避免手填超大值卡死页面）
         function getCount() {
-            return parseInt(document.getElementById("countInput").value) || 1;
+            let n = parseInt(document.getElementById("countInput").value);
+            if (isNaN(n)) n = 1;
+            return Math.min(100, Math.max(1, n));
         }
 
         function fillTemplate(){
